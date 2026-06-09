@@ -1,11 +1,27 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
+import { ConfigModule } from '@nestjs/config';
+
 import { ElasticsearchModule } from './elasticsearch/elasticsearch.module';
 
+// import { BulkIndexService } from './ingestion/bulk-index.service';
+
+import { MoviesModule } from './movies/movies.module';
+
 @Module({
-  imports: [ElasticsearchModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
+    ElasticsearchModule,
+
+    MoviesModule,
+  ],
+
+  // providers: [
+  //   BulkIndexService
+  // ],
+  
 })
 export class AppModule {}
