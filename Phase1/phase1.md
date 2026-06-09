@@ -283,10 +283,6 @@ The password reset utility initially failed because Elasticsearch was not runnin
 
 After verifying that the cluster was healthy and running, the password was reset successfully and the generated password was used for all subsequent API calls.
 
-### Key Learning
-
-A healthy Elasticsearch node does not necessarily mean requests will succeed. Security configuration, authentication, and protocol configuration (HTTP vs HTTPS) are equally important parts of the setup process.
-
 ---
 
 ## Deliverables
