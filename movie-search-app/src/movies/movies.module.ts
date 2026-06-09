@@ -6,6 +6,9 @@ import { SearchController } from './controllers/search.controller';
 
 import { SearchService } from './services/search.service';
 
+import { AnalyticsController } from './controllers/analytics.controller';
+import { AnalyticsService } from './services/analytics.service';
+
 @Module({
   imports: [
     ElasticsearchModule,
@@ -13,10 +16,13 @@ import { SearchService } from './services/search.service';
 
   controllers: [
     SearchController,
+    AnalyticsController,
   ],
 
   providers: [
     SearchService,
+    AnalyticsService,
   ],
 })
+
 export class MoviesModule {}
