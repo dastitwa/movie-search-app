@@ -46,20 +46,47 @@ export class GlobalExceptionFilter
         ? exception.message
         : 'Internal server error';
 
+    const requestId =
+      request['requestId'] ??
+      'unknown';
+
+    const errorLog = {
+      timestamp:
+        new Date().toISOString(),
+
+      requestId,
+
+      method:
+        request.method,
+
+      path:
+        request.originalUrl,
+
+      statusCode:
+        status,
+
+      error:
+        message,
+    };
+
     this.logger.error(
-      `${request.method} ${request.url}`,
+      JSON.stringify(errorLog),
       exception instanceof Error
         ? exception.stack
-        : JSON.stringify(
-            exception,
-          ),
+        : undefined,
     );
 
     response.status(status).json({
       statusCode: status,
+
       timestamp:
         new Date().toISOString(),
-      path: request.url,
+
+      requestId,
+
+      path:
+        request.originalUrl,
+
       message,
     });
   }

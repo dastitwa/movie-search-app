@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  Module,
+  MiddlewareConsumer,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
 
@@ -18,6 +23,8 @@ import { ElasticsearchModule } from './elasticsearch/elasticsearch.module';
 import { HealthModule } from './health/health.module';
 
 import { MoviesModule } from './movies/movies.module';
+
+import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 
 @Module({
   imports: [
@@ -48,4 +55,19 @@ import { MoviesModule } from './movies/movies.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule
+  implements NestModule
+{
+  configure(
+    consumer: MiddlewareConsumer,
+  ): void {
+    consumer
+      .apply(
+        CorrelationIdMiddleware,
+      )
+      .forRoutes({
+        path: '*path',
+        method: RequestMethod.ALL,
+      });
+  }
+}

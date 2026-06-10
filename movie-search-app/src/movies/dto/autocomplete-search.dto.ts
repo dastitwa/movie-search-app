@@ -8,5 +8,5 @@ export class AutocompleteSearchDto {
   @IsString()
   @MinLength(1)
   @MaxLength(50)
-  q: string;
+  query: string;
 }

@@ -48,17 +48,33 @@ async function bootstrap(): Promise<void> {
         ElasticsearchService,
       );
 
+    const moviesCsvPath =
+      process.env.MOVIES_CSV_PATH ??
+      './data/tmdb_5000_movies.csv';
+
+    const creditsCsvPath =
+      process.env.CREDITS_CSV_PATH ??
+      './data/tmdb_5000_credits.csv';
+
+    logger.log(
+      `Movies CSV Path: ${moviesCsvPath}`,
+    );
+
     logger.log(
       'Reading Movies CSV',
     );
 
     const movies =
       await csvReader.readCsv(
-        './data/tmdb_5000_movies.csv',
+        moviesCsvPath,
       );
 
     logger.log(
       `Movies Loaded: ${movies.length}`,
+    );
+
+    logger.log(
+      `Credits CSV Path: ${creditsCsvPath}`,
     );
 
     logger.log(
@@ -67,7 +83,7 @@ async function bootstrap(): Promise<void> {
 
     const credits =
       await csvReader.readCsv(
-        './data/tmdb_5000_credits.csv',
+        creditsCsvPath,
       );
 
     logger.log(

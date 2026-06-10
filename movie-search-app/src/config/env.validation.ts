@@ -1,20 +1,22 @@
 import * as Joi from 'joi';
 
-export const envValidationSchema =
-  Joi.object({
-    PORT: Joi.number()
-      .default(3000),
+export const envValidationSchema = Joi.object({
+  PORT: Joi.number().default(3000),
 
-    ELASTICSEARCH_NODE:
-      Joi.string()
-        .uri()
-        .required(),
+  NODE_ENV: Joi.string()
+    .valid('development', 'production', 'test')
+    .default('development'),
 
-    ELASTICSEARCH_USERNAME:
-      Joi.string()
-        .required(),
+  ELASTICSEARCH_NODE: Joi.string().required(),
 
-    ELASTICSEARCH_PASSWORD:
-      Joi.string()
-        .required(),
-  });
+  ELASTICSEARCH_SECURITY_ENABLED: Joi.boolean()
+    .default(false),
+
+  ELASTICSEARCH_USERNAME: Joi.string()
+    .allow('')
+    .optional(),
+
+  ELASTICSEARCH_PASSWORD: Joi.string()
+    .allow('')
+    .optional(),
+});

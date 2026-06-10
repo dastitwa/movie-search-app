@@ -5,7 +5,10 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Client } from '@elastic/elasticsearch';
+import {
+  Client,
+  ClientOptions,
+} from '@elastic/elasticsearch';
 
 @Injectable()
 export class ElasticsearchService
@@ -20,7 +23,7 @@ export class ElasticsearchService
   constructor(
     private readonly configService: ConfigService,
   ) {
-    this.client = new Client({
+    const clientOptions: ClientOptions = {
       node:
         this.configService.get<string>(
           'ELASTICSEARCH_NODE',
@@ -40,20 +43,62 @@ export class ElasticsearchService
       tls: {
         rejectUnauthorized: false,
       },
-    });
+
+      maxRetries: 3,
+
+      requestTimeout: 10000,
+
+      sniffOnStart: false,
+    };
+
+    this.client = new Client(clientOptions);
+  }
+
+  private async waitForElasticsearch(): Promise<void> {
+    const maxAttempts = 5;
+
+    for (
+      let attempt = 1;
+      attempt <= maxAttempts;
+      attempt++
+    ) {
+      try {
+        const response =
+          await this.client.cluster.health();
+
+        this.logger.log(
+          `Elasticsearch connected successfully. Status: ${response.status}`,
+        );
+
+        return;
+      } catch (error) {
+        const delay = Math.min(
+          1000 * Math.pow(2, attempt),
+          10000,
+        );
+
+        this.logger.warn(
+          `Elasticsearch unavailable. Retry ${attempt}/${maxAttempts} in ${delay}ms`,
+        );
+
+        if (attempt === maxAttempts) {
+          throw error;
+        }
+
+        await new Promise(
+          (resolve) =>
+            setTimeout(resolve, delay),
+        );
+      }
+    }
   }
 
   async onModuleInit(): Promise<void> {
     try {
-      const response =
-        await this.client.cluster.health();
-
-      this.logger.log(
-        `Elasticsearch connected successfully. Status: ${response.status}`,
-      );
+      await this.waitForElasticsearch();
     } catch (error) {
       this.logger.error(
-        'Failed to connect Elasticsearch',
+        'Failed to connect Elasticsearch after retries',
         error,
       );
 
@@ -107,9 +152,13 @@ export class ElasticsearchService
     index: string,
     body: Record<string, any>,
   ) {
+    const safeBody = { ...body };
+  
+    delete safeBody.index;
+  
     return this.client.search({
       index,
-      ...body,
+      ...safeBody,
     });
   }
 

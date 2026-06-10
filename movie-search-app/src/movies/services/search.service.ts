@@ -145,23 +145,25 @@ export class SearchService {
         'Page must be greater than 0',
       );
     }
-
+  
     if (size < 1 || size > 50) {
       throw new BadRequestException(
         'Size must be between 1 and 50',
       );
     }
-
+  
     const from = (page - 1) * size;
-
-    if (from > 10000) {
+  
+    // Elasticsearch recommends avoiding deep pagination.
+    // For results beyond 10,000 documents, use search_after.
+    if (from + size > 10000) {
       throw new BadRequestException(
-        'Pagination limit exceeded',
+        'Deep pagination is not supported. Use search_after for results beyond 10,000 documents.',
       );
     }
-
+  
     const start = Date.now();
-
+  
     const response =
       await this.elasticsearchService.search(
         'movies',
@@ -171,14 +173,14 @@ export class SearchService {
           size,
         },
       );
-
+  
     const rawTotal = response.hits.total;
-
+  
     const total =
       typeof rawTotal === 'number'
         ? rawTotal
         : rawTotal?.value ?? 0;
-
+  
     return {
       page,
       size,

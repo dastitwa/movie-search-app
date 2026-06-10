@@ -35,7 +35,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.fullTextSearch(
-      dto.q,
+      dto.query,
       Number(page),
       Number(size),
     );
@@ -70,7 +70,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.fuzzySearch(
-      dto.q,
+      dto.query,
       Number(page),
       Number(size),
     );
@@ -87,7 +87,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.autocompleteSearch(
-      dto.q,
+      dto.query,
       Number(page),
       Number(size),
     );
@@ -104,7 +104,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.partialSearch(
-      dto.q,
+      dto.query,
       Number(page),
       Number(size),
     );
@@ -139,7 +139,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.combinedSearch(
-      dto.q,
+      dto.query,
       dto.genre,
       dto.year,
       Number(page),
@@ -158,7 +158,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.rankingSearch(
-      dto.q,
+      dto.query,
       dto.mode as RankingMode,
       Number(page),
       Number(size),

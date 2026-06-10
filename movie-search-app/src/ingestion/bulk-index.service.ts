@@ -55,15 +55,29 @@ import {
             operations,
           );
   
-        if (response.errors) {
-          this.logger.error(
-            `Batch ${
-              i / batchSize + 1
-            } failed`,
-          );
-  
-          continue;
-        }
+          if (response.errors) {
+            this.logger.error(
+              `Batch ${
+                i / batchSize + 1
+              } contains indexing errors`,
+            );
+          
+            const failedItems =
+              response.items.filter(
+                (item: any) =>
+                  item.index?.error,
+              );
+          
+            this.logger.error(
+              JSON.stringify(
+                failedItems.slice(0, 5),
+                null,
+                2,
+              ),
+            );
+          
+            continue;
+          }
   
         this.logger.log(
           `Indexed ${
