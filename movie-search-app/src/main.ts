@@ -1,9 +1,19 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+
+import {
+  ValidationPipe,
+} from '@nestjs/common';
+
 import { AppModule } from './app.module';
 
+import { GlobalExceptionFilter }
+  from './common/filters/global-exception.filter';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app =
+    await NestFactory.create(
+      AppModule,
+    );
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -11,6 +21,10 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,
     }),
+  );
+
+  app.useGlobalFilters(
+    new GlobalExceptionFilter(),
   );
 
   await app.listen(

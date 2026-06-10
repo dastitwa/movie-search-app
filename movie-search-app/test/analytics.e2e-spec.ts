@@ -1,9 +1,11 @@
 import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+
+import {
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common';
 
 import request from 'supertest';
-
-import { ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from '../src/app.module';
 
@@ -15,9 +17,9 @@ describe('Analytics API', () => {
       await Test.createTestingModule({
         imports: [AppModule],
       }).compile();
-  
+
     app = moduleRef.createNestApplication();
-  
+
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -25,7 +27,7 @@ describe('Analytics API', () => {
         transform: true,
       }),
     );
-  
+
     await app.init();
   });
 
@@ -36,9 +38,7 @@ describe('Analytics API', () => {
   it('should return genres', async () => {
     const response = await request(
       app.getHttpServer(),
-    ).get(
-      '/movies/analytics/genres',
-    );
+    ).get('/movies/analytics/genres');
 
     expect(response.status).toBe(200);
   });
@@ -46,9 +46,7 @@ describe('Analytics API', () => {
   it('should return languages', async () => {
     const response = await request(
       app.getHttpServer(),
-    ).get(
-      '/movies/analytics/languages',
-    );
+    ).get('/movies/analytics/languages');
 
     expect(response.status).toBe(200);
   });
@@ -56,9 +54,7 @@ describe('Analytics API', () => {
   it('should return directors', async () => {
     const response = await request(
       app.getHttpServer(),
-    ).get(
-      '/movies/analytics/directors',
-    );
+    ).get('/movies/analytics/directors');
 
     expect(response.status).toBe(200);
   });
@@ -66,10 +62,42 @@ describe('Analytics API', () => {
   it('should return release years', async () => {
     const response = await request(
       app.getHttpServer(),
-    ).get(
-      '/movies/analytics/release-years',
-    );
+    ).get('/movies/analytics/release-years');
 
     expect(response.status).toBe(200);
+  });
+
+  it('should return health status', async () => {
+    const response = await request(
+      app.getHttpServer(),
+    ).get('/health');
+
+    expect(response.status).toBe(200);
+
+    expect(response.body.status)
+      .toBe('ok');
+
+    expect(response.body.elasticsearch)
+      .toBe(true);
+
+    expect(response.body.movieCount)
+      .toBeGreaterThan(0);
+  });
+
+  it('should throttle excessive requests', async () => {
+    let throttled = false;
+
+    for (let i = 0; i < 35; i++) {
+      const response = await request(
+        app.getHttpServer(),
+      ).get('/health');
+
+      if (response.status === 429) {
+        throttled = true;
+        break;
+      }
+    }
+
+    expect(throttled).toBe(true);
   });
 });

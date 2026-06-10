@@ -2,6 +2,8 @@ import { Controller, Get } from '@nestjs/common';
 
 import { ElasticsearchService } from '../elasticsearch/elasticsearch.service';
 
+import { MOVIES_INDEX } from '../movies/constants/index.constants';
+
 @Controller('health')
 export class HealthController {
   constructor(
@@ -15,7 +17,7 @@ export class HealthController {
 
     const movieCount =
       await this.elasticsearchService.count(
-        'movies',
+        MOVIES_INDEX,
       );
 
     return {
