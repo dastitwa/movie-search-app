@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+} from '@nestjs/common';
 
 import { ElasticsearchService } from '../../elasticsearch/elasticsearch.service';
 
@@ -137,9 +140,27 @@ export class SearchService {
     page = 1,
     size = 10,
   ) {
-    const start = Date.now();
+    if (page < 1) {
+      throw new BadRequestException(
+        'Page must be greater than 0',
+      );
+    }
+
+    if (size < 1 || size > 50) {
+      throw new BadRequestException(
+        'Size must be between 1 and 50',
+      );
+    }
 
     const from = (page - 1) * size;
+
+    if (from > 10000) {
+      throw new BadRequestException(
+        'Pagination limit exceeded',
+      );
+    }
+
+    const start = Date.now();
 
     const response =
       await this.elasticsearchService.search(
@@ -152,6 +173,7 @@ export class SearchService {
       );
 
     const rawTotal = response.hits.total;
+
     const total =
       typeof rawTotal === 'number'
         ? rawTotal
@@ -160,16 +182,10 @@ export class SearchService {
     return {
       page,
       size,
-
       total,
-
-      totalPages: Math.ceil(
-        total / size,
-      ),
-
+      totalPages: Math.ceil(total / size),
       executionTimeMs:
         Date.now() - start,
-
       results:
         response.hits.hits.map(
           (hit) => ({

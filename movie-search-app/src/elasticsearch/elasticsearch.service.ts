@@ -105,11 +105,11 @@ export class ElasticsearchService
 
   async search(
     index: string,
-    query: Record<string, any>,
+    body: Record<string, any>,
   ) {
     return this.client.search({
       index,
-      query,
+      ...body,
     });
   }
 

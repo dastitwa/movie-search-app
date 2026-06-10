@@ -6,6 +6,14 @@ import {
 
 import { SearchService } from '../services/search.service';
 
+import { FullTextSearchDto } from '../dto/full-text-search.dto';
+import { KeywordSearchDto } from '../dto/keyword-search.dto';
+import { FuzzySearchDto } from '../dto/fuzzy-search.dto';
+import { AutocompleteSearchDto } from '../dto/autocomplete-search.dto';
+import { FilteredSearchDto } from '../dto/filtered-search.dto';
+import { CombinedSearchDto } from '../dto/combined-search.dto';
+import { RankingSearchDto } from '../dto/ranking-search.dto';
+
 import type {
   RankingMode,
 } from '../queries/ranking.query';
@@ -18,7 +26,7 @@ export class SearchController {
 
   @Get('full-text')
   async fullTextSearch(
-    @Query('q') query: string,
+    @Query() dto: FullTextSearchDto,
 
     @Query('page')
     page = '1',
@@ -27,7 +35,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.fullTextSearch(
-      query,
+      dto.q,
       Number(page),
       Number(size),
     );
@@ -35,9 +43,7 @@ export class SearchController {
 
   @Get('keyword')
   async keywordSearch(
-    @Query('field') field: string,
-
-    @Query('value') value: string,
+    @Query() dto: KeywordSearchDto,
 
     @Query('page')
     page = '1',
@@ -46,8 +52,8 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.keywordSearch(
-      field,
-      value,
+      dto.field,
+      dto.value,
       Number(page),
       Number(size),
     );
@@ -55,7 +61,7 @@ export class SearchController {
 
   @Get('fuzzy')
   async fuzzySearch(
-    @Query('q') query: string,
+    @Query() dto: FuzzySearchDto,
 
     @Query('page')
     page = '1',
@@ -64,7 +70,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.fuzzySearch(
-      query,
+      dto.q,
       Number(page),
       Number(size),
     );
@@ -72,7 +78,7 @@ export class SearchController {
 
   @Get('autocomplete')
   async autocompleteSearch(
-    @Query('q') query: string,
+    @Query() dto: AutocompleteSearchDto,
 
     @Query('page')
     page = '1',
@@ -81,7 +87,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.autocompleteSearch(
-      query,
+      dto.q,
       Number(page),
       Number(size),
     );
@@ -89,7 +95,7 @@ export class SearchController {
 
   @Get('partial')
   async partialSearch(
-    @Query('q') query: string,
+    @Query() dto: FuzzySearchDto,
 
     @Query('page')
     page = '1',
@@ -98,7 +104,7 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.partialSearch(
-      query,
+      dto.q,
       Number(page),
       Number(size),
     );
@@ -106,10 +112,7 @@ export class SearchController {
 
   @Get('filter')
   async filterSearch(
-    @Query('genre') genre?: string,
-
-    @Query('language')
-    language?: string,
+    @Query() dto: FilteredSearchDto,
 
     @Query('page')
     page = '1',
@@ -118,8 +121,8 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.filterSearch(
-      genre,
-      language,
+      dto.genre,
+      dto.language,
       Number(page),
       Number(size),
     );
@@ -127,13 +130,7 @@ export class SearchController {
 
   @Get('combined')
   async combinedSearch(
-    @Query('q') query: string,
-
-    @Query('genre')
-    genre?: string,
-
-    @Query('year')
-    year?: string,
+    @Query() dto: CombinedSearchDto,
 
     @Query('page')
     page = '1',
@@ -142,11 +139,9 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.combinedSearch(
-      query,
-      genre,
-      year
-        ? Number(year)
-        : undefined,
+      dto.q,
+      dto.genre,
+      dto.year,
       Number(page),
       Number(size),
     );
@@ -154,10 +149,7 @@ export class SearchController {
 
   @Get('ranking')
   async rankingSearch(
-    @Query('q') query: string,
-
-    @Query('mode')
-    mode = 'all',
+    @Query() dto: RankingSearchDto,
 
     @Query('page')
     page = '1',
@@ -166,8 +158,8 @@ export class SearchController {
     size = '10',
   ) {
     return this.searchService.rankingSearch(
-      query,
-      mode as RankingMode,
+      dto.q,
+      dto.mode as RankingMode,
       Number(page),
       Number(size),
     );

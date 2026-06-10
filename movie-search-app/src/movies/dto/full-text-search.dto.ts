@@ -1,14 +1,12 @@
 import {
-    IsNotEmpty,
     IsString,
-    MaxLength,
     MinLength,
+    MaxLength,
   } from 'class-validator';
   
-  export class FuzzySearchDto {
+  export class FullTextSearchDto {
     @IsString()
     @MinLength(2)
     @MaxLength(100)
-    @IsNotEmpty()
     q: string;
   }

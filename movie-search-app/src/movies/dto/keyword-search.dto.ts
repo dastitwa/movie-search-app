@@ -1,14 +1,20 @@
 import {
-    IsNotEmpty,
-    IsString,
-  } from 'class-validator';
-  
-  export class KeywordSearchDto {
-    @IsString()
-    @IsNotEmpty()
-    field: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    value: string;
-  }
+  IsString,
+  IsIn,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
+
+export class KeywordSearchDto {
+  @IsIn([
+    'director',
+    'genre',
+    'language',
+  ])
+  field: string;
+
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  value: string;
+}

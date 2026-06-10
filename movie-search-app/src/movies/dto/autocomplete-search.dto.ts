@@ -1,10 +1,12 @@
 import {
-    IsNotEmpty,
-    IsString,
-  } from 'class-validator';
-  
-  export class AutocompleteSearchDto {
-    @IsString()
-    @IsNotEmpty()
-    q: string;
-  }
+  IsString,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
+
+export class AutocompleteSearchDto {
+  @IsString()
+  @MinLength(1)
+  @MaxLength(50)
+  q: string;
+}

@@ -6,6 +6,8 @@ import { ElasticsearchModule } from './elasticsearch/elasticsearch.module';
 
 // import { BulkIndexService } from './ingestion/bulk-index.service';
 
+import { HealthModule } from './health/health.module';
+
 import { MoviesModule } from './movies/movies.module';
 
 @Module({
@@ -15,8 +17,10 @@ import { MoviesModule } from './movies/movies.module';
     }),
 
     ElasticsearchModule,
-
+    
     MoviesModule,
+
+    HealthModule,
   ],
 
   // providers: [

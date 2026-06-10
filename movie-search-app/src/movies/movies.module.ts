@@ -9,6 +9,8 @@ import { SearchService } from './services/search.service';
 import { AnalyticsController } from './controllers/analytics.controller';
 import { AnalyticsService } from './services/analytics.service';
 
+import { SearchSanitizerService } from './services/search-sanitizer.service';
+
 @Module({
   imports: [
     ElasticsearchModule,
@@ -22,6 +24,7 @@ import { AnalyticsService } from './services/analytics.service';
   providers: [
     SearchService,
     AnalyticsService,
+    SearchSanitizerService,
   ],
 })
 
